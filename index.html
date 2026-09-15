@@ -297,7 +297,7 @@
 
     // Gece yarısından önce açarsa geri sayım göstersin mi?
     kilit: true,
-    acilis: { yil: 2026, ay: 9, gun: 16, saat: 0 },
+    acilis: '2026-09-16T00:00:00+03:00', // Türkiye saatiyle gece yarısı
 
     // Arkada çalan şarkı (ilki çalmazsa ikincisi denenir)
     muzik: {
@@ -533,8 +533,7 @@
   };
 
   // ---------- kilit ----------
-  const a = AYAR.acilis;
-  const acilisZamani = new Date(a.yil, a.ay - 1, a.gun, a.saat, 0, 0).getTime();
+  const acilisZamani = Date.parse(AYAR.acilis);
   const iki = (n) => String(n).padStart(2, '0');
 
   const kilitBaslat = () => {
