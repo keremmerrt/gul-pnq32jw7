@@ -196,6 +196,7 @@
   #mesaj { margin: .6rem 0 .4rem; }
   #mesaj p { font-size: 1.35rem; line-height: 1.55; font-style: italic; }
   .imza { font-family: "Great Vibes", "Brush Script MT", cursive; font-size: 2.2rem; color: var(--gold); }
+  .imza-ek { font-family: "Cormorant Garamond", Georgia, serif; font-size: 1.35rem; font-weight: 500; letter-spacing: .04em; color: var(--ink); }
   .tekrar { margin-top: 1rem; font-size: 1.05rem; padding: .5rem 1.4rem; opacity: .75; }
 
   .satir { animation: belir 1.3s ease both; animation-delay: var(--d, 0s); }
@@ -289,6 +290,7 @@
     isim: 'Zeynep',
     finalIsim: 'Zeynep’imm',
     imza: 'Kerem',
+    imzaEk: '(MERTTT) 😉',
 
     // 'kirmizi' | 'pembe' | 'beyaz'
     gulRengi: 'kirmizi',
@@ -665,7 +667,11 @@
     });
     const son = 2.4 + AYAR.mesaj.length * 1.1;
     const imza = $('imza');
-    imza.textContent = '— ' + AYAR.imza;
+    imza.textContent = '— ' + AYAR.imza + ' ';
+    const imzaEk = document.createElement('span');
+    imzaEk.className = 'imza-ek';
+    imzaEk.textContent = AYAR.imzaEk;
+    imza.appendChild(imzaEk);
     imza.style.setProperty('--d', son + .3 + 's');
     $('tekrar').style.setProperty('--d', son + 1.6 + 's');
 
