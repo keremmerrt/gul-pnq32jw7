@@ -186,6 +186,12 @@
   .ilerleme-cubuk i { display: block; height: 100%; width: 0; background: #ff8ea3; border-radius: 2px; transition: width .5s linear; }
   .ilerleme-zaman { display: flex; justify-content: space-between; margin-top: .25rem; font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 
+  .spotify-link {
+    display: inline-block; margin-top: .45rem; padding: .3rem .9rem; border-radius: 999px;
+    font-size: .95rem; color: #1ed760; text-decoration: none;
+    border: 1px solid rgba(30, 215, 96, .45); background: rgba(30, 215, 96, .08);
+  }
+
   .ipucu { font-size: 1.1rem; color: var(--muted); font-style: italic; animation: nabiz 2.4s ease-in-out infinite; }
   @keyframes nabiz { 50% { opacity: .45; } }
 
@@ -196,7 +202,7 @@
   #mesaj { margin: .6rem 0 .4rem; }
   #mesaj p { font-size: 1.35rem; line-height: 1.55; font-style: italic; }
   .imza { font-family: "Great Vibes", "Brush Script MT", cursive; font-size: 2.2rem; color: var(--gold); }
-  .imza-ek { font-family: "Cormorant Garamond", Georgia, serif; font-size: 1.35rem; font-weight: 500; letter-spacing: .04em; color: var(--ink); }
+  .imza-ek { display: block; margin-top: .15rem; font-family: "Cormorant Garamond", Georgia, serif; font-style: normal; font-size: 1.35rem; font-weight: 500; line-height: 1.3; letter-spacing: .06em; color: var(--ink); }
   .tekrar { margin-top: 1rem; font-size: 1.05rem; padding: .5rem 1.4rem; opacity: .75; }
 
   .satir { animation: belir 1.3s ease both; animation-delay: var(--d, 0s); }
@@ -213,6 +219,7 @@
 
 <div id="yildizlar"></div>
 <div id="yapraklar"></div>
+
 <div id="yt-kap" aria-hidden="true"><div id="yt"></div></div>
 
 <button id="muzik" class="muzik" hidden aria-label="Şarkıyı durdur ya da başlat">
@@ -262,6 +269,7 @@
     <div class="ilerleme" id="kart-ilerleme" hidden>
       <div class="ilerleme-cubuk"><i id="ilerleme-dolu"></i></div>
       <div class="ilerleme-zaman"><span id="z-simdi">0:00</span><span id="z-toplam">0:00</span></div>
+      <a class="spotify-link" id="spotify-link" href="https://open.spotify.com/track/2ZLcYrOL3CzfNysrqhTSZX" target="_blank" rel="noopener">Tamamını Spotify’da dinle ↗</a>
     </div>
     <p id="kart-metin"></p>
   </div>
@@ -302,7 +310,7 @@
     muzik: {
       sarki: 'Yağmur Yüreklim',
       sanatci: 'Seksendört',
-      youtube: ['bzitjN24aWE', 'AQmRvpPwbKs'],
+      youtube: ['AQmRvpPwbKs', '6NLV5oO6oh4'],
       kapak: 'kapak.jpg',
     },
 
@@ -318,7 +326,7 @@
         metin: 'Film forumlarındaa bunu buldum, yan yana izlemek tercihimdirr, bana sarılırsın asklfjaskl' },
       { emoji: '🙈', baslik: 'Aklıma geldikçe',
         metin: 'Ne kadar anlayışlıı, ne kadarr vicdanlı, temiz kalpli, tertemizz güzel mi güzell birr kız olduğunu hatırladıkçaaa kendi kendime eşşekk gibi gülüyomm.' },
-      { emoji: '✨', baslik: 'Ve sen',
+      { emoji: '😊', baslik: 'Ve sen',
         metin: 'Belki tanıyalıı çok olmadı ama iyii ki tanımışımm.' },
     ],
 
@@ -451,7 +459,6 @@
   let hazir = false;
   let calmaIstegi = false;
   let caliyor = false;
-  let sesAcildi = false;
   let yedekDenendi = false;
 
   const muzikDurum = (durum) => {
@@ -463,21 +470,9 @@
   };
   muzikDurum('duraklatildi');
 
-  const sesiYavasAc = () => {
-    let v = 0;
-    const t = setInterval(() => {
-      v += 5;
-      if (oynatici && oynatici.setVolume) oynatici.setVolume(Math.min(v, 100));
-      if (v >= 100) clearInterval(t);
-    }, 120);
-  };
-
   const cal = () => {
     calmaIstegi = true;
-    if (hazir) {
-      if (!sesAcildi) oynatici.setVolume(0);
-      oynatici.playVideo();
-    }
+    if (hazir) oynatici.playVideo();
     setTimeout(() => { if (!caliyor) muzikDurum('bekliyor'); }, 3500);
   };
 
@@ -495,7 +490,6 @@
           if (e.data === YT.PlayerState.PLAYING) {
             caliyor = true;
             muzikDurum('caliyor');
-            if (!sesAcildi) { sesAcildi = true; sesiYavasAc(); }
           } else if (e.data === YT.PlayerState.PAUSED) {
             caliyor = false;
             muzikDurum('duraklatildi');
@@ -524,6 +518,11 @@
   muzik.addEventListener('click', () => {
     if (caliyor && oynatici) oynatici.pauseVideo();
     else cal();
+  });
+
+  $('spotify-link').addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (hazir) oynatici.pauseVideo();
   });
 
   // ---------- ekran geçişleri ----------
