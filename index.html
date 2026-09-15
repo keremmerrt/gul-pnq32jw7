@@ -1,0 +1,685 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zeynep için 🌹</title>
+<meta property="og:title" content="Zeynep için 🌹">
+<meta property="og:description" content="Sana küçük bir şey hazırladım…">
+<meta name="theme-color" content="#12040a">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg1: #12040a;
+    --bg2: #2a0914;
+    --ink: #f7e9ec;
+    --muted: #c9a6ae;
+    --gold: #f3c98b;
+    --p1: #ff8aa0;
+    --p2: #a3122f;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    background: radial-gradient(120% 90% at 50% 30%, #3a0c1b 0%, var(--bg2) 38%, var(--bg1) 100%);
+    background-color: var(--bg1);
+    color: var(--ink);
+    font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  /* ---------- arka plan ---------- */
+  #yildizlar, #yapraklar { position: fixed; inset: 0; pointer-events: none; overflow: hidden; }
+  #yildizlar { z-index: 0; }
+  #yapraklar { z-index: 1; }
+  .yildiz {
+    position: absolute; width: 2px; height: 2px; border-radius: 50%;
+    background: #fff; opacity: .15;
+    animation: parla var(--t) ease-in-out infinite; animation-delay: var(--d);
+  }
+  @keyframes parla { 50% { opacity: .85; } }
+
+  .yaprak {
+    position: absolute; top: 0; left: var(--x);
+    width: var(--s); height: calc(var(--s) * 1.2);
+    background: radial-gradient(circle at 35% 30%, var(--p1), var(--p2) 75%);
+    border-radius: 50% 0 50% 50%;
+    opacity: 0;
+    animation: dus var(--t) linear forwards;
+  }
+  @keyframes dus {
+    0%   { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 0; }
+    8%   { opacity: .95; }
+    100% { transform: translate3d(var(--dx), 112vh, 0) rotate(var(--r)); opacity: .6; }
+  }
+
+  /* ---------- müzik ---------- */
+  #yt-kap {
+    position: fixed; left: 0; bottom: 0; width: 200px; height: 200px;
+    opacity: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .muzik {
+    position: fixed; z-index: 3;
+    top: calc(12px + env(safe-area-inset-top, 0px)); left: 50%;
+    transform: translate(-50%, -8px); opacity: 0;
+    display: flex; align-items: center; gap: .6rem;
+    max-width: calc(100% - 32px);
+    padding: .45rem .95rem .45rem .8rem; border-radius: 999px;
+    background: rgba(20, 6, 12, .6);
+    border: 1px solid rgba(255, 170, 190, .25);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    color: var(--ink); font: inherit; font-size: 1rem; white-space: nowrap;
+    cursor: pointer; transition: opacity .8s ease, transform .8s ease;
+  }
+  .muzik.gorun { opacity: 1; transform: translate(-50%, 0); }
+  .muzik[data-durum="bekliyor"] { animation: nabiz 1.8s ease-in-out infinite; border-color: rgba(255, 170, 190, .65); }
+  .muzik-yazi { overflow: hidden; text-overflow: ellipsis; }
+  .muzik-ikon { font-size: .8rem; opacity: .85; min-width: 1em; }
+  .esitleyici { display: flex; align-items: flex-end; gap: 2px; height: 14px; flex: none; }
+  .esitleyici i {
+    display: block; width: 3px; height: 30%; border-radius: 1px; background: #ff8ea3;
+    animation: bar 1s ease-in-out infinite; animation-play-state: paused;
+  }
+  .esitleyici i:nth-child(2) { animation-delay: -.4s; }
+  .esitleyici i:nth-child(3) { animation-delay: -.7s; }
+  .esitleyici i:nth-child(4) { animation-delay: -.2s; }
+  .muzik[data-durum="caliyor"] .esitleyici i { animation-play-state: running; }
+  @keyframes bar { 0%, 100% { height: 25%; } 50% { height: 100%; } }
+
+  /* ---------- ekranlar ---------- */
+  .ekran {
+    position: fixed; inset: 0; z-index: 2;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 1rem;
+    padding: calc(56px + env(safe-area-inset-top, 0px)) 20px calc(20px + env(safe-area-inset-bottom, 0px));
+    text-align: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 1.1s ease;
+  }
+  .ekran.aktif { opacity: 1; pointer-events: auto; }
+
+  .ust {
+    font-size: 1.05rem; letter-spacing: .28em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500;
+  }
+  .isim {
+    font-family: "Great Vibes", "Brush Script MT", cursive; font-weight: 400;
+    font-size: clamp(3.8rem, 18vw, 6.5rem); line-height: 1.1;
+    color: #ffe3e9; text-shadow: 0 0 32px rgba(255, 90, 130, .55);
+  }
+  .dugme {
+    font: inherit; font-size: 1.3rem; color: var(--ink);
+    padding: .75rem 2rem; border-radius: 999px;
+    border: 1px solid rgba(255, 170, 190, .45);
+    background: rgba(255, 111, 145, .12);
+    cursor: pointer; transition: background .3s, transform .2s;
+  }
+  .dugme:hover { background: rgba(255, 111, 145, .22); }
+  .dugme:active { transform: scale(.97); }
+
+  /* kilit */
+  .ay { font-size: 2.6rem; filter: drop-shadow(0 0 18px rgba(255, 230, 180, .5)); }
+  .kilit-baslik { font-size: clamp(1.7rem, 7vw, 2.4rem); font-weight: 500; font-style: italic; }
+  .sayac { font-size: clamp(2.6rem, 13vw, 4rem); font-variant-numeric: tabular-nums; letter-spacing: .05em; color: #ffd6de; }
+  .alt { font-size: 1.2rem; color: var(--muted); }
+
+  /* giriş */
+  .giris-ic { display: flex; flex-direction: column; align-items: center; gap: 1rem; max-width: 26rem; }
+  .giris-metin { font-size: 1.3rem; line-height: 1.55; font-style: italic; margin-bottom: .6rem; }
+
+  /* gül */
+  #gul-ekrani { cursor: pointer; }
+  .gul-kutu { position: relative; width: min(76vw, 40vh, 380px); aspect-ratio: 1; flex: none; }
+  .parilti {
+    position: absolute; inset: 8%; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 80, 120, .5), transparent 65%);
+    filter: blur(18px);
+    transform: scale(calc(.45 + var(--i, 0) * .75));
+    opacity: calc(.35 + var(--i, 0) * .65);
+    transition: transform 1.6s ease, opacity 1.6s ease;
+  }
+  .gul-kutu svg, #final-gul svg {
+    position: relative; width: 100%; height: 100%; overflow: visible;
+    animation: nefes 7s ease-in-out infinite;
+  }
+  @keyframes nefes { 50% { transform: scale(1.03) rotate(4deg); } }
+
+  .halka {
+    transform-box: view-box; transform-origin: 0 0;
+    transform: scale(.25) rotate(-70deg); opacity: 0;
+    transition: transform 1.7s cubic-bezier(.16, .84, .3, 1), opacity 1s ease;
+  }
+  .halka.acik { transform: scale(1) rotate(0deg); opacity: 1; }
+
+  .kart {
+    width: 100%; max-width: 24rem; min-height: 11rem;
+    opacity: 0; transform: translateY(12px);
+    transition: opacity .55s ease, transform .55s ease;
+  }
+  .kart.gorun { opacity: 1; transform: none; }
+  .kart-sayac { font-size: .85rem; letter-spacing: .25em; color: var(--muted); }
+  .kart-emoji { font-size: 1.9rem; margin: .15rem 0 0; }
+  .kart-ust { font-size: .9rem; letter-spacing: .22em; text-transform: uppercase; color: var(--gold); margin-bottom: .1rem; }
+  .kart h3 { font-weight: 500; font-style: italic; font-size: 1.7rem; color: #ffd6de; line-height: 1.2; }
+  .kart-alt { font-size: 1.05rem; color: var(--muted); }
+  .kart p { font-size: 1.2rem; line-height: 1.45; margin-top: .4rem; }
+
+  .muzik-kapak { width: 24px; height: 24px; border-radius: 4px; object-fit: cover; flex: none; }
+  .kart-sarki {
+    display: flex; align-items: center; gap: .9rem; text-align: left;
+    margin-top: .5rem; padding: .65rem; border-radius: 14px;
+    background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 170, 190, .15);
+  }
+  .kart-kapak { width: 5.5rem; height: 5.5rem; border-radius: 8px; object-fit: cover; flex: none; box-shadow: 0 8px 24px rgba(0, 0, 0, .5); }
+  .kart-sarki-bilgi { min-width: 0; }
+  .sarki-ad { font-size: 1.55rem; font-weight: 500; color: #ffd6de; line-height: 1.15; }
+  .ilerleme { margin-top: .6rem; }
+  .ilerleme-cubuk { height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .18); overflow: hidden; }
+  .ilerleme-cubuk i { display: block; height: 100%; width: 0; background: #ff8ea3; border-radius: 2px; transition: width .5s linear; }
+  .ilerleme-zaman { display: flex; justify-content: space-between; margin-top: .25rem; font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+  .ipucu { font-size: 1.1rem; color: var(--muted); font-style: italic; animation: nabiz 2.4s ease-in-out infinite; }
+  @keyframes nabiz { 50% { opacity: .45; } }
+
+  /* final */
+  #final { justify-content: flex-start; overflow-y: auto; }
+  .final-ic { margin: auto; max-width: 30rem; display: flex; flex-direction: column; align-items: center; gap: .6rem; padding-block: .5rem 1rem; }
+  #final-gul { width: min(50vw, 26vh, 220px); aspect-ratio: 1; margin-bottom: .4rem; }
+  #mesaj { margin: .6rem 0 .4rem; }
+  #mesaj p { font-size: 1.35rem; line-height: 1.55; font-style: italic; }
+  .imza { font-family: "Great Vibes", "Brush Script MT", cursive; font-size: 2.2rem; color: var(--gold); }
+  .tekrar { margin-top: 1rem; font-size: 1.05rem; padding: .5rem 1.4rem; opacity: .75; }
+
+  .satir { animation: belir 1.3s ease both; animation-delay: var(--d, 0s); }
+  #final:not(.aktif) .satir { animation: none; opacity: 0; }
+  @keyframes belir { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .halka { transition-duration: .01s; }
+    .gul-kutu svg, #final-gul svg, .ipucu, .yildiz { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="yildizlar"></div>
+<div id="yapraklar"></div>
+<div id="yt-kap" aria-hidden="true"><div id="yt"></div></div>
+
+<button id="muzik" class="muzik" hidden aria-label="Şarkıyı durdur ya da başlat">
+  <img class="muzik-kapak" id="muzik-kapak" alt="">
+  <span class="esitleyici" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+  <span id="muzik-yazi" class="muzik-yazi"></span>
+  <span id="muzik-ikon" class="muzik-ikon"></span>
+</button>
+
+<!-- Gece yarısından önce açılırsa -->
+<section id="kilit" class="ekran">
+  <div class="ay">🌙</div>
+  <p class="ust">Biraz sabır, <span data-isim>Zeynep</span></p>
+  <h2 class="kilit-baslik">Bu gül gece yarısı açılacak</h2>
+  <div class="sayac"><span id="s-sa">00</span>:<span id="s-dk">00</span>:<span id="s-sn">00</span></div>
+  <p class="alt">Tam doğum gününde geri gel 🌹</p>
+</section>
+
+<!-- Giriş -->
+<section id="giris" class="ekran">
+  <div class="giris-ic">
+    <p class="ust">Senin için</p>
+    <h1 class="isim" data-isim>Zeynep</h1>
+    <p class="giris-metin">Bu gülü çok sevdiğim birisiiiiii için<br>özel hazırladım.<br>İçindeee sevebileceğin şeylerr vardır belkii…</p>
+    <button id="basla" class="dugme">Hazırım 🌹</button>
+  </div>
+</section>
+
+<!-- Açan gül -->
+<section id="gul-ekrani" class="ekran">
+  <div class="gul-kutu">
+    <div class="parilti" id="parilti"></div>
+    <svg id="gul" viewBox="-200 -200 400 400" aria-hidden="true"></svg>
+  </div>
+  <div id="kart" class="kart">
+    <div class="kart-sayac" id="kart-sayac"></div>
+    <div class="kart-emoji" id="kart-emoji"></div>
+    <div class="kart-ust" id="kart-ust"></div>
+    <h3 id="kart-baslik"></h3>
+    <div class="kart-alt" id="kart-alt"></div>
+    <div class="kart-sarki" id="kart-sarki" hidden>
+      <img class="kart-kapak" id="kart-kapak" alt="">
+      <div class="kart-sarki-bilgi">
+        <div class="kart-ust">Şu an çalıyor</div>
+        <div class="sarki-ad" id="sarki-ad"></div>
+        <div class="kart-alt" id="sarki-sanatci"></div>
+      </div>
+    </div>
+    <div class="ilerleme" id="kart-ilerleme" hidden>
+      <div class="ilerleme-cubuk"><i id="ilerleme-dolu"></i></div>
+      <div class="ilerleme-zaman"><span id="z-simdi">0:00</span><span id="z-toplam">0:00</span></div>
+    </div>
+    <p id="kart-metin"></p>
+  </div>
+  <p class="ipucu" id="ipucu">Güle dokun</p>
+</section>
+
+<!-- Final -->
+<section id="final" class="ekran">
+  <div class="final-ic">
+    <div id="final-gul" class="satir" style="--d:0s"></div>
+    <p class="ust satir" style="--d:.7s">İyi ki doğdun</p>
+    <h1 class="isim satir" style="--d:1.3s" id="final-isim"></h1>
+    <div id="mesaj"></div>
+    <p class="imza satir" id="imza"></p>
+    <button class="dugme tekrar satir" id="tekrar">Gülü yeniden aç</button>
+  </div>
+</section>
+
+<script>
+(() => {
+  // =====================================================================
+  //  AYARLAR — değiştirilecek her şey burada
+  // =====================================================================
+  const AYAR = {
+    isim: 'Zeynep',
+    finalIsim: 'Zeynep’imm',
+    imza: 'Kerem',
+
+    // 'kirmizi' | 'pembe' | 'beyaz'
+    gulRengi: 'kirmizi',
+
+    // Gece yarısından önce açarsa geri sayım göstersin mi?
+    kilit: true,
+    acilis: { yil: 2026, ay: 9, gun: 16, saat: 0 },
+
+    // Arkada çalan şarkı (ilki çalmazsa ikincisi denenir)
+    muzik: {
+      sarki: 'Yağmur Yüreklim',
+      sanatci: 'Seksendört',
+      youtube: ['bzitjN24aWE', 'AQmRvpPwbKs'],
+      kapak: 'kapak.jpg',
+    },
+
+    // Her dokunuşta açılan yapraklar (sırayla)
+    sevdikleri: [
+      { emoji: '🌹', baslik: 'Güller',
+        metin: 'Güllerii seviyodunn değil mii, ben de gülümüü çokkk seviyorummm.' },
+      { sarki: true,
+        metin: 'Artıkk bu şarkı her çaldığındaa aklıma sen geleceksinn.' },
+      { emoji: '📗', ust: 'En sevdiğin kitap', baslik: 'Kuyucaklı Yusuf', alt: 'Sabahattin Ali',
+        metin: 'Bir gün senin için tekrar okuyacağımm, belki sana okurum, belli mi olurr.' },
+      { emoji: '🎬', ust: 'Bizim film', baslik: 'Kızıl Tepe', alt: 'Crimson Peak · 2015',
+        metin: 'Beraber izleyeceğimiz filmi şimdidenn buldumm.' },
+      { emoji: '🙈', baslik: 'Aklıma geldikçe',
+        metin: 'Ne kadar anlayışlıı, ne kadarr vicdanlı, temiz kalpli, tertemizz güzel mi güzell birr kız olduğunu hatırladıkçaaa kendi kendime eşşekk gibi gülüyomm.' },
+      { emoji: '✨', baslik: 'Ve sen',
+        metin: 'Belki tanıyalıı çok olmadı ama iyii ki tanımışımm.' },
+    ],
+
+    // Son ekrandaki not
+    mesaj: [
+      'Bu kısa sürede bile günlerime renk kattınn.',
+      'Sanki yıllardır tanıdığım biriymiş gibi hissettirdin.',
+      'Bu güll hiç solmasınn,',
+      'umarım yeni yaşın da seninn kadar güzell olurr.',
+      'Nice Mutlu Yıllaraaa 😘',
+    ],
+  };
+  // =====================================================================
+
+  const PALET = {
+    kirmizi: { koyu: '#4a0613', orta: '#a3122f', acik: '#df3d5c', kenar: '#ff8ea3' },
+    pembe:   { koyu: '#6b1437', orta: '#d4457a', acik: '#f288ae', kenar: '#ffd3e2' },
+    beyaz:   { koyu: '#8a7768', orta: '#e6d8ce', acik: '#f8f0ea', kenar: '#ffffff' },
+  };
+
+  const params = new URLSearchParams(location.search);
+  const onizleme = params.has('onizleme');
+  const renk = PALET[params.get('renk')] || PALET[AYAR.gulRengi] || PALET.kirmizi;
+  const azHareket = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const $ = (id) => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const el = (tag, attrs) => {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  };
+  const f = (n) => n.toFixed(1);
+
+  document.documentElement.style.setProperty('--p1', renk.kenar);
+  document.documentElement.style.setProperty('--p2', renk.orta);
+  document.querySelectorAll('[data-isim]').forEach((e) => { e.textContent = AYAR.isim; });
+  $('final-isim').textContent = AYAR.finalIsim;
+  document.title = AYAR.isim + ' için 🌹';
+
+  // ---------- yıldızlar ----------
+  const yildizlar = $('yildizlar');
+  for (let i = 0; i < 70; i++) {
+    const s = document.createElement('div');
+    s.className = 'yildiz';
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.setProperty('--t', (2.5 + Math.random() * 4) + 's');
+    s.style.setProperty('--d', (-Math.random() * 6) + 's');
+    if (Math.random() < .2) { s.style.width = s.style.height = '3px'; }
+    yildizlar.appendChild(s);
+  }
+
+  // ---------- gül ----------
+  const N = AYAR.sevdikleri.length;
+  const TOMURCUK = 2;
+  const TOPLAM = TOMURCUK + N;
+  const svg = $('gul');
+  const halkalar = [];
+
+  const yaprakYolu = (R) => {
+    const w = R * 0.62;
+    return `M0,0 C${f(-w)},${f(-R * .18)} ${f(-w * 1.05)},${f(-R * .88)} ${f(-w * .32)},${f(-R)} ` +
+           `Q0,${f(-R * 1.06)} ${f(w * .32)},${f(-R)} ` +
+           `C${f(w * 1.05)},${f(-R * .88)} ${f(w)},${f(-R * .18)} 0,0Z`;
+  };
+
+  const defs = el('defs', {});
+  svg.appendChild(defs);
+
+  const yesilGrad = el('linearGradient', { id: 'gy', x1: 0, y1: 0, x2: 0, y2: 1 });
+  yesilGrad.appendChild(el('stop', { offset: 0, 'stop-color': '#5b9656' }));
+  yesilGrad.appendChild(el('stop', { offset: 1, 'stop-color': '#1b3a21' }));
+  defs.appendChild(yesilGrad);
+
+  // yeşil yapraklar (en sonda görünür)
+  const yesil = el('g', { class: 'halka' });
+  const L = 198, lw = L * .3;
+  [35, 155, 275].forEach((a) => {
+    const g = el('g', { transform: `rotate(${a})` });
+    g.appendChild(el('path', { d: `M0,0 Q${f(-lw)},${f(-L * .5)} 0,${-L} Q${f(lw)},${f(-L * .5)} 0,0Z`, fill: 'url(#gy)' }));
+    g.appendChild(el('path', { d: `M0,${f(-L * .2)} L0,${f(-L * .9)}`, stroke: '#a9d3a5', 'stroke-opacity': '.35', 'stroke-width': '1.5', fill: 'none' }));
+    yesil.appendChild(g);
+  });
+  svg.appendChild(yesil);
+
+  // taç yaprak halkaları: dıştan içe çizilir, içtekiler üstte kalır
+  for (let k = TOPLAM - 1; k >= 0; k--) {
+    const R = 30 + (k / (TOPLAM - 1)) * 140;
+    const adet = Math.min(3 + Math.round(k * .75), 9);
+
+    const grad = el('radialGradient', { id: 'g' + k, gradientUnits: 'userSpaceOnUse', cx: 0, cy: 0, r: f(R * 1.06) });
+    [[0, renk.koyu], [.42, renk.orta], [.82, renk.acik], [1, renk.kenar]].forEach(([o, c]) => {
+      grad.appendChild(el('stop', { offset: o, 'stop-color': c }));
+    });
+    defs.appendChild(grad);
+
+    const halka = el('g', { class: 'halka' });
+    for (let j = 0; j < adet; j++) {
+      const aci = k * 37 + j * 360 / adet + (Math.random() * 10 - 5);
+      const r = R * (.93 + Math.random() * .1);
+      const w = r * .62;
+      const p = el('g', { transform: `rotate(${f(aci)})` });
+      p.appendChild(el('path', {
+        d: yaprakYolu(r), fill: `url(#g${k})`,
+        stroke: renk.koyu, 'stroke-opacity': '.6', 'stroke-width': '1.2', 'stroke-linejoin': 'round',
+      }));
+      p.appendChild(el('path', {
+        d: `M${f(-w * .55)},${f(-r * .86)} Q0,${f(-r)} ${f(w * .55)},${f(-r * .86)}`,
+        fill: 'none', stroke: renk.kenar, 'stroke-opacity': '.45', 'stroke-width': '1.4', 'stroke-linecap': 'round',
+      }));
+      halka.appendChild(p);
+    }
+    svg.appendChild(halka);
+    halkalar[k] = halka;
+  }
+
+  // ortadaki kıvrım
+  const merkez = el('g', {});
+  merkez.appendChild(el('circle', { r: 13, fill: renk.koyu }));
+  merkez.appendChild(el('path', {
+    d: 'M0,0 m-4,0 a4,4 0 1,1 8,0 a7,7 0 1,1 -14,0 a10,10 0 1,1 20,0',
+    fill: 'none', stroke: renk.orta, 'stroke-width': '2.2', 'stroke-linecap': 'round',
+  }));
+  svg.appendChild(merkez);
+
+  // ---------- müzik ----------
+  const muzik = $('muzik');
+  let oynatici = null;
+  let hazir = false;
+  let calmaIstegi = false;
+  let caliyor = false;
+  let sesAcildi = false;
+  let yedekDenendi = false;
+
+  const muzikDurum = (durum) => {
+    muzik.dataset.durum = durum;
+    $('muzik-ikon').textContent = durum === 'caliyor' ? '❚❚' : '▶︎';
+    $('muzik-yazi').textContent = durum === 'bekliyor'
+      ? 'Şarkıyı başlatmak için dokun'
+      : `${AYAR.muzik.sarki} · ${AYAR.muzik.sanatci}`;
+  };
+  muzikDurum('duraklatildi');
+
+  const sesiYavasAc = () => {
+    let v = 0;
+    const t = setInterval(() => {
+      v += 5;
+      if (oynatici && oynatici.setVolume) oynatici.setVolume(Math.min(v, 100));
+      if (v >= 100) clearInterval(t);
+    }, 120);
+  };
+
+  const cal = () => {
+    calmaIstegi = true;
+    if (hazir) {
+      if (!sesAcildi) oynatici.setVolume(0);
+      oynatici.playVideo();
+    }
+    setTimeout(() => { if (!caliyor) muzikDurum('bekliyor'); }, 3500);
+  };
+
+  window.onYouTubeIframeAPIReady = () => {
+    oynatici = new YT.Player('yt', {
+      width: 200, height: 200,
+      videoId: AYAR.muzik.youtube[0],
+      playerVars: { playsinline: 1, controls: 0, disablekb: 1, rel: 0 },
+      events: {
+        onReady: () => {
+          hazir = true;
+          if (calmaIstegi) cal();
+        },
+        onStateChange: (e) => {
+          if (e.data === YT.PlayerState.PLAYING) {
+            caliyor = true;
+            muzikDurum('caliyor');
+            if (!sesAcildi) { sesAcildi = true; sesiYavasAc(); }
+          } else if (e.data === YT.PlayerState.PAUSED) {
+            caliyor = false;
+            muzikDurum('duraklatildi');
+          } else if (e.data === YT.PlayerState.ENDED) {
+            oynatici.seekTo(0);
+            oynatici.playVideo();
+          }
+        },
+        onError: () => {
+          const yedek = AYAR.muzik.youtube[1];
+          if (!yedekDenendi && yedek) {
+            yedekDenendi = true;
+            if (calmaIstegi) oynatici.loadVideoById(yedek);
+            else oynatici.cueVideoById(yedek);
+          } else {
+            muzik.hidden = true;
+          }
+        },
+      },
+    });
+  };
+  const ytBetik = document.createElement('script');
+  ytBetik.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(ytBetik);
+
+  muzik.addEventListener('click', () => {
+    if (caliyor && oynatici) oynatici.pauseVideo();
+    else cal();
+  });
+
+  // ---------- ekran geçişleri ----------
+  const ekranGoster = (id) => {
+    document.querySelectorAll('.ekran').forEach((e) => e.classList.toggle('aktif', e.id === id));
+  };
+
+  // ---------- kilit ----------
+  const a = AYAR.acilis;
+  const acilisZamani = new Date(a.yil, a.ay - 1, a.gun, a.saat, 0, 0).getTime();
+  const iki = (n) => String(n).padStart(2, '0');
+
+  const kilitBaslat = () => {
+    ekranGoster('kilit');
+    const guncelle = () => {
+      const kalan = acilisZamani - Date.now();
+      if (kalan <= 0) {
+        clearInterval(zamanlayici);
+        ekranGoster('giris');
+        return;
+      }
+      const sn = Math.floor(kalan / 1000);
+      $('s-sa').textContent = iki(Math.floor(sn / 3600));
+      $('s-dk').textContent = iki(Math.floor(sn / 60) % 60);
+      $('s-sn').textContent = iki(sn % 60);
+    };
+    const zamanlayici = setInterval(guncelle, 1000);
+    guncelle();
+  };
+
+  // ---------- şarkı kartı ----------
+  $('kart-kapak').src = AYAR.muzik.kapak;
+  $('muzik-kapak').src = AYAR.muzik.kapak;
+  $('sarki-ad').textContent = AYAR.muzik.sarki;
+  $('sarki-sanatci').textContent = AYAR.muzik.sanatci;
+  const sure = (s) => `${Math.floor(s / 60)}:${iki(Math.floor(s % 60))}`;
+  setInterval(() => {
+    if (!hazir || !oynatici.getDuration) return;
+    const toplam = oynatici.getDuration();
+    const simdi = oynatici.getCurrentTime();
+    if (!toplam) return;
+    $('ilerleme-dolu').style.width = (simdi / toplam * 100) + '%';
+    $('z-simdi').textContent = sure(simdi);
+    $('z-toplam').textContent = sure(toplam);
+  }, 500);
+
+  // ---------- gülü açma ----------
+  let adim = 0;
+  let mesgul = false;
+  const kilitle = (ms) => { mesgul = true; setTimeout(() => { mesgul = false; }, ms); };
+
+  $('basla').addEventListener('click', () => {
+    cal();
+    muzik.hidden = false;
+    requestAnimationFrame(() => requestAnimationFrame(() => muzik.classList.add('gorun')));
+    ekranGoster('gul-ekrani');
+    kilitle(1400);
+    setTimeout(() => {
+      for (let k = 0; k < TOMURCUK; k++) halkalar[k].classList.add('acik');
+    }, 500);
+  });
+
+  const kart = $('kart');
+  const yaz = (id, metin) => {
+    const e = $(id);
+    e.textContent = metin || '';
+    e.hidden = !metin;
+  };
+  const kartGoster = (oge, i) => {
+    kart.classList.remove('gorun');
+    setTimeout(() => {
+      yaz('kart-sayac', `${i + 1} / ${N}`);
+      const sarkiMi = !!oge.sarki;
+      yaz('kart-emoji', sarkiMi ? '' : oge.emoji);
+      yaz('kart-ust', sarkiMi ? '' : oge.ust);
+      yaz('kart-baslik', sarkiMi ? '' : oge.baslik);
+      yaz('kart-alt', sarkiMi ? '' : oge.alt);
+      $('kart-sarki').hidden = !sarkiMi;
+      $('kart-ilerleme').hidden = !sarkiMi;
+      yaz('kart-metin', oge.metin);
+      kart.classList.add('gorun');
+    }, i === 0 ? 150 : 420);
+  };
+
+  const ilerle = () => {
+    if (mesgul) return;
+    kilitle(950);
+    if (adim < N) {
+      halkalar[TOMURCUK + adim].classList.add('acik');
+      kartGoster(AYAR.sevdikleri[adim], adim);
+      adim++;
+      if (adim === N) yesil.classList.add('acik');
+      $('parilti').style.setProperty('--i', adim / N);
+      $('ipucu').textContent = adim < N ? 'Bir yaprak daha…' : 'Son bir kez dokun 🌹';
+      if (navigator.vibrate) navigator.vibrate(12);
+    } else {
+      finaleGec();
+    }
+  };
+  $('gul-ekrani').addEventListener('click', ilerle);
+
+  // ---------- final ----------
+  const yaprakYagdir = (adet) => {
+    if (azHareket) return;
+    const kap = $('yapraklar');
+    for (let i = 0; i < adet; i++) {
+      const y = document.createElement('div');
+      y.className = 'yaprak';
+      y.style.setProperty('--x', Math.random() * 100 + 'vw');
+      y.style.setProperty('--s', (12 + Math.random() * 14) + 'px');
+      y.style.setProperty('--dx', (Math.random() * 30 - 15) + 'vw');
+      y.style.setProperty('--r', (Math.random() * 900 - 450) + 'deg');
+      y.style.setProperty('--t', (6 + Math.random() * 6) + 's');
+      y.style.animationDelay = (Math.random() * (adet > 1 ? 3 : 0)) + 's';
+      y.addEventListener('animationend', () => y.remove());
+      kap.appendChild(y);
+    }
+  };
+
+  let finalGosterildi = false;
+  const finaleGec = () => {
+    if (finalGosterildi) return;
+    finalGosterildi = true;
+
+    const kopya = svg.cloneNode(true);
+    kopya.removeAttribute('id');
+    $('final-gul').appendChild(kopya);
+
+    const mesaj = $('mesaj');
+    AYAR.mesaj.forEach((satir, i) => {
+      const p = document.createElement('p');
+      p.className = 'satir';
+      p.style.setProperty('--d', (2.4 + i * 1.1) + 's');
+      p.textContent = satir;
+      mesaj.appendChild(p);
+    });
+    const son = 2.4 + AYAR.mesaj.length * 1.1;
+    const imza = $('imza');
+    imza.textContent = '— ' + AYAR.imza;
+    imza.style.setProperty('--d', son + .3 + 's');
+    $('tekrar').style.setProperty('--d', son + 1.6 + 's');
+
+    ekranGoster('final');
+    if (navigator.vibrate) navigator.vibrate([30, 60, 30]);
+    yaprakYagdir(45);
+    setInterval(() => yaprakYagdir(1), 650);
+  };
+
+  $('tekrar').addEventListener('click', () => location.reload());
+
+  // ---------- başlangıç ----------
+  if (AYAR.kilit && !onizleme && Date.now() < acilisZamani) {
+    kilitBaslat();
+  } else {
+    ekranGoster('giris');
+  }
+})();
+</script>
+</body>
+</html>
