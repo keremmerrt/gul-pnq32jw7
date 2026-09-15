@@ -178,6 +178,7 @@
     background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 170, 190, .15);
   }
   .kart-kapak { width: 5.5rem; height: 5.5rem; border-radius: 8px; object-fit: cover; flex: none; box-shadow: 0 8px 24px rgba(0, 0, 0, .5); }
+  .kart-kapak.kitap { width: 4.2rem; height: 6.4rem; border-radius: 3px; }
   .kart-sarki-bilgi { min-width: 0; }
   .sarki-ad { font-size: 1.55rem; font-weight: 500; color: #ffd6de; line-height: 1.15; }
   .ilerleme { margin-top: .6rem; }
@@ -251,12 +252,11 @@
     <div class="kart-ust" id="kart-ust"></div>
     <h3 id="kart-baslik"></h3>
     <div class="kart-alt" id="kart-alt"></div>
-    <div class="kart-sarki" id="kart-sarki" hidden>
+    <div class="kart-sarki" id="kart-medya" hidden>
       <img class="kart-kapak" id="kart-kapak" alt="">
       <div class="kart-sarki-bilgi">
-        <div class="kart-ust">Şu an çalıyor</div>
-        <div class="sarki-ad" id="sarki-ad"></div>
-        <div class="kart-alt" id="sarki-sanatci"></div>
+        <div class="sarki-ad" id="medya-ad"></div>
+        <div class="kart-alt" id="medya-alt"></div>
       </div>
     </div>
     <div class="ilerleme" id="kart-ilerleme" hidden>
@@ -307,11 +307,11 @@
 
     // Her dokunuşta açılan yapraklar (sırayla)
     sevdikleri: [
-      { emoji: '🌹', baslik: 'Güller',
+      { emoji: '🌹', baslik: 'Tatlış Birine...',
         metin: 'Güllerii seviyodunn değil mii, ben de gülümüü çokkk seviyorummm.' },
-      { sarki: true,
+      { sarki: true, ust: 'Şu an çalıyor', baslik: 'Yağmur Yüreklim', alt: 'Seksendört', gorsel: 'kapak.jpg',
         metin: 'Artıkk bu şarkı her çaldığındaa aklıma sen geleceksinn.' },
-      { emoji: '📗', ust: 'En sevdiğin kitap', baslik: 'Kuyucaklı Yusuf', alt: 'Sabahattin Ali',
+      { kitap: true, ust: 'Bildiğimm en sevdiğin kitaplardan biri buyduu', baslik: 'Kuyucaklı Yusuf', alt: 'Sabahattin Ali', gorsel: 'kitap.jpg',
         metin: 'Bir gün senin için tekrar okuyacağımm, belki sana okurum, belli mi olurr.' },
       { emoji: '🎬', ust: 'Bizim film', baslik: 'Kızıl Tepe', alt: 'Crimson Peak · 2015',
         metin: 'Film forumlarındaa bunu buldum, yan yana izlemek tercihimdirr, bana sarılırsın asklfjaskl' },
@@ -554,10 +554,8 @@
   };
 
   // ---------- şarkı kartı ----------
-  $('kart-kapak').src = AYAR.muzik.kapak;
   $('muzik-kapak').src = AYAR.muzik.kapak;
-  $('sarki-ad').textContent = AYAR.muzik.sarki;
-  $('sarki-sanatci').textContent = AYAR.muzik.sanatci;
+  AYAR.sevdikleri.forEach((oge) => { if (oge.gorsel) new Image().src = oge.gorsel; });
   const sure = (s) => `${Math.floor(s / 60)}:${iki(Math.floor(s % 60))}`;
   setInterval(() => {
     if (!hazir || !oynatici.getDuration) return;
@@ -595,13 +593,19 @@
     kart.classList.remove('gorun');
     setTimeout(() => {
       yaz('kart-sayac', `${i + 1} / ${N}`);
-      const sarkiMi = !!oge.sarki;
-      yaz('kart-emoji', sarkiMi ? '' : oge.emoji);
-      yaz('kart-ust', sarkiMi ? '' : oge.ust);
-      yaz('kart-baslik', sarkiMi ? '' : oge.baslik);
-      yaz('kart-alt', sarkiMi ? '' : oge.alt);
-      $('kart-sarki').hidden = !sarkiMi;
-      $('kart-ilerleme').hidden = !sarkiMi;
+      const gorselli = !!oge.gorsel;
+      yaz('kart-emoji', gorselli ? '' : oge.emoji);
+      yaz('kart-ust', oge.ust);
+      yaz('kart-baslik', gorselli ? '' : oge.baslik);
+      yaz('kart-alt', gorselli ? '' : oge.alt);
+      $('kart-medya').hidden = !gorselli;
+      if (gorselli) {
+        $('kart-kapak').src = oge.gorsel;
+        $('kart-kapak').classList.toggle('kitap', !!oge.kitap);
+        $('medya-ad').textContent = oge.baslik;
+        $('medya-alt').textContent = oge.alt || '';
+      }
+      $('kart-ilerleme').hidden = !oge.sarki;
       yaz('kart-metin', oge.metin);
       kart.classList.add('gorun');
     }, i === 0 ? 150 : 420);
