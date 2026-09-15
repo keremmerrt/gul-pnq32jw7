@@ -186,12 +186,6 @@
   .ilerleme-cubuk i { display: block; height: 100%; width: 0; background: #ff8ea3; border-radius: 2px; transition: width .5s linear; }
   .ilerleme-zaman { display: flex; justify-content: space-between; margin-top: .25rem; font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
 
-  .spotify-link {
-    display: inline-block; margin-top: .45rem; padding: .3rem .9rem; border-radius: 999px;
-    font-size: .95rem; color: #1ed760; text-decoration: none;
-    border: 1px solid rgba(30, 215, 96, .45); background: rgba(30, 215, 96, .08);
-  }
-
   .ipucu { font-size: 1.1rem; color: var(--muted); font-style: italic; animation: nabiz 2.4s ease-in-out infinite; }
   @keyframes nabiz { 50% { opacity: .45; } }
 
@@ -268,9 +262,7 @@
     </div>
     <div class="ilerleme" id="kart-ilerleme" hidden>
       <div class="ilerleme-cubuk"><i id="ilerleme-dolu"></i></div>
-      <div class="ilerleme-zaman"><span id="z-simdi">0:00</span><span id="z-toplam">0:00</span></div>
-      <a class="spotify-link" id="spotify-link" href="https://open.spotify.com/track/2ZLcYrOL3CzfNysrqhTSZX" target="_blank" rel="noopener">Tamamını Spotify’da dinle ↗</a>
-    </div>
+      <div class="ilerleme-zaman"><span id="z-simdi">0:00</span><span id="z-toplam">0:00</span></div>    </div>
     <p id="kart-metin"></p>
   </div>
   <p class="ipucu" id="ipucu">Güle dokun</p>
@@ -519,12 +511,6 @@
     if (caliyor && oynatici) oynatici.pauseVideo();
     else cal();
   });
-
-  $('spotify-link').addEventListener('click', (e) => {
-    e.stopPropagation();
-    if (hazir) oynatici.pauseVideo();
-  });
-
   // ---------- ekran geçişleri ----------
   const ekranGoster = (id) => {
     document.querySelectorAll('.ekran').forEach((e) => e.classList.toggle('aktif', e.id === id));
